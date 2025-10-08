@@ -61,10 +61,6 @@ class TestCalculator(unittest.TestCase):
             self.calc.divide(10, 0)
         self.assertEqual(str(context.exception), "Cannot divide by zero")
 
-    def test_divide_should_fail(self):
-        """This test is intentionally wrong to break the build"""
-        result = self.calc.divide(10, 2)
-        self.assertEqual(result, 999)  # ❌ 錯誤的期望值
 
 if __name__ == "__main__":
     unittest.main()
