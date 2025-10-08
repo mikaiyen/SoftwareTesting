@@ -1,10 +1,16 @@
-name: Calculator CI
+name: HW2 Calculator CI
 
+# 重點：只在 hw2 資料夾有變更時才執行
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main ]
+    paths:
+      - 'hw2/**'              # 只監控 hw2 資料夾
+      - '.github/workflows/hw2-ci.yml'  # 和這個 workflow 本身
   pull_request:
     branches: [ main ]
+    paths:
+      - 'hw2/**'
 
 jobs:
   test:
@@ -12,6 +18,11 @@ jobs:
     strategy:
       matrix:
         python-version: ['3.9', '3.10', '3.11', '3.12']
+
+    # 重點：設定工作目錄為 hw2
+    defaults:
+      run:
+        working-directory: hw2
 
     steps:
     - name: Checkout code
@@ -27,13 +38,13 @@ jobs:
         python -m pip install --upgrade pip
         pip install pytest pytest-cov
 
-    - name: Run tests
+    - name: Run HW2 tests
       run: |
         python -m pytest CalcTest.py -v
 
     - name: Display test results
       if: always()
-      run: echo "Tests completed"
+      run: echo "HW2 tests completed"
 
   build-status:
     needs: test
@@ -43,8 +54,8 @@ jobs:
     - name: Check build status
       run: |
         if [ "${{ needs.test.result }}" == "success" ]; then
-          echo "✅ Build passed!"
+          echo "✅ HW2 Build passed!"
         else
-          echo "❌ Build failed!"
+          echo "❌ HW2 Build failed!"
           exit 1
         fi
