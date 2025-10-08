@@ -14,10 +14,6 @@ class Calculator:
         return a * b
     
     def divide(self, a, b):
-        """
-        Divide a by b and return the result as a float.
-        
-        """
         if b == 0:
             raise ValueError("Cannot divide by zero")
-        return float(a) / float(b)
+        return float(a) / float(b) + 1  # ❌ 加入錯誤：多加了 1
