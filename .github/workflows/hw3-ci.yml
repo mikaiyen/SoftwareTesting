@@ -1,0 +1,59 @@
+name: HW3 BoundedQueue CI
+
+# 重點：只在 hw3 資料夾有變更時才執行
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'hw3/**'              # 只監控 hw3 資料夾
+      - '.github/workflows/hw3-ci.yml'  # 和這個 workflow 本身
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'hw3/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ['18', '20', '22']
+
+    # 重點：設定工作目錄為 hw3
+    defaults:
+      run:
+        working-directory: hw3
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Display Node.js version
+      run: node --version
+
+    - name: Run HW3 BoundedQueue tests
+      run: |
+        node --test BoundedQueue_Tests.js
+
+    - name: Display test results
+      if: always()
+      run: echo "HW3 tests completed for Node.js ${{ matrix.node-version }}"
+
+  build-status:
+    needs: test
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+    - name: Check build status
+      run: |
+        if [ "${{ needs.test.result }}" == "success" ]; then
+          echo "✅ HW3 Build passed!"
+        else
+          echo "❌ HW3 Build failed!"
+          exit 1
+        fi
